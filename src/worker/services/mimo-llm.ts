@@ -11,7 +11,7 @@ export async function callLLM(
   messages: Array<{ role: string; content: string }>,
   options: LLMOptions = {}
 ) {
-  const { temperature = 0.3, topP = 0.95, maxTokens = 4096 } = options;
+  const { temperature = 0.3, topP = 0.95, maxTokens = 65536 } = options;
 
   const res = await fetch(`${BASE_URL}/chat/completions`, {
     method: "POST",

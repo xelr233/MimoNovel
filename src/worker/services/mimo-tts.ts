@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.xiaomimimo.com/v1";
+const BASE_URL = "https://token-plan-sgp.xiaomimimo.com/v1";
 
 export type TTSModel = "mimo-v2.5-tts" | "mimo-v2.5-tts-voicedesign" | "mimo-v2.5-tts-voiceclone";
 

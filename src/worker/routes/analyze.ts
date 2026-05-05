@@ -60,7 +60,7 @@ analyzeRoute.post("/analyze", async (c) => {
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: text },
       ],
-      { temperature: 0.3, maxTokens: 8192 }
+      { temperature: 0.3, maxTokens: 65536 }
     );
 
     const segments = extractJSON(result);
