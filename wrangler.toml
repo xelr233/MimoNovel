@@ -1,0 +1,9 @@
+name = "mimo-novel"
+compatibility_date = "2025-05-01"
+main = "src/worker/index.ts"
+
+[assets]
+directory = "dist"
+
+[vars]
+MIMO_API_KEY = ""
