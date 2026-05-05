@@ -15,13 +15,36 @@ const SYSTEM_PROMPT = `你是一个小说文本分析助手。你的任务是分
 3. text: 段落文本内容
 4. emotion: 建议的朗读情绪（如：平静、愤怒、悲伤、开心、紧张等）
 
-请以 JSON 数组格式返回，不要添加任何额外说明。
+要求：
+- 只返回 JSON 数组，不要添加任何额外说明、markdown 标记或代码块
+- 确保 JSON 格式完整，所有字符串用双引号
+- 每个段落的 text 不要超过 200 字
+
 示例格式：
-[
-  {"type": "narration", "character": null, "text": "夜幕降临，小镇笼罩在一片寂静之中。", "emotion": "平静"},
-  {"type": "dialogue", "character": "张三", "text": "你怎么还不回家？", "emotion": "关切"},
-  {"type": "dialogue", "character": "李四", "text": "我在等一个人。", "emotion": "平静"}
-]`;
+[{"type":"narration","character":null,"text":"夜幕降临，小镇笼罩在一片寂静之中。","emotion":"平静"},{"type":"dialogue","character":"张三","text":"你怎么还不回家？","emotion":"关切"}]`;
+
+function extractJSON(text: string): any[] {
+  // 去掉 markdown 代码块
+  let cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+
+  // 尝试直接解析
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {}
+
+  // 尝试找第一个 [ 到最后一个 ]
+  const start = cleaned.indexOf("[");
+  const end = cleaned.lastIndexOf("]");
+  if (start !== -1 && end > start) {
+    try {
+      const parsed = JSON.parse(cleaned.slice(start, end + 1));
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+  }
+
+  throw new Error("无法从 LLM 响应中提取有效 JSON");
+}
 
 analyzeRoute.post("/analyze", async (c) => {
   const { text } = await c.req.json<{ text: string }>();
@@ -31,12 +54,16 @@ analyzeRoute.post("/analyze", async (c) => {
   }
 
   try {
-    const result = await callLLM(c.env.MIMO_API_KEY, [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: text },
-    ], { temperature: 0.3 });
+    const result = await callLLM(
+      c.env.MIMO_API_KEY,
+      [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: text },
+      ],
+      { temperature: 0.3, maxTokens: 8192 }
+    );
 
-    const segments = JSON.parse(result);
+    const segments = extractJSON(result);
     return c.json({ segments });
   } catch (err: any) {
     return c.json({ error: err.message }, 500);
