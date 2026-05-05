@@ -47,6 +47,23 @@
 - **Endpoint**: `https://token-plan-sgp.xiaomimimo.com/v1/chat/completions`
 - **用途**: 角色识别、情绪标注、文本分段
 
+**模型超参建议**:
+
+| 参数 | 默认值 | 范围 | 说明 |
+|------|--------|------|------|
+| temperature | 1.0 | [0, 1.5] | 采样温度，越高越随机 |
+| top_p | 0.95 | [0.01, 1.0] | 核采样阈值，越高多样性越高 |
+
+**按任务类型推荐** (mimo-v2.5-pro):
+
+| 任务 | temperature | top_p | 本项目使用场景 |
+|------|-------------|-------|----------------|
+| 创意写作 | 0.8 | 0.95 | 生成 TTS 风格指令 |
+| 通用问答 | 0.8 | 0.95 | 角色信息提取 |
+| AI 编程 | 0.3 | 0.95 | 结构化 JSON 输出 |
+
+实际调用时，角色分析用较低 temperature (0.3) 保证结构化输出稳定；风格指令生成用较高 temperature (0.8) 让描述更生动。
+
 ### TTS — 语音合成
 
 三种模式，按需选择：
@@ -79,12 +96,15 @@
 ```
 用户粘贴小说文本
     ↓
-POST /api/analyze → MiMo LLM
+POST /api/analyze → MiMo LLM (temperature=0.3, 稳定输出)
     返回: [{角色名, 推荐音色, 情绪, 文本段落}]
     ↓
 用户确认/调整角色音色分配
     ↓
-逐段 POST /api/tts → MiMo TTS
+POST /api/style → MiMo LLM (temperature=0.8, 生成风格指令)
+    返回: 每个角色/段落的 TTS 风格提示词
+    ↓
+逐段 POST /api/tts → MiMo TTS (temperature=0.6, 默认)
     返回: 音频数据
     ↓
 前端拼接 → 播放器播放 / 导出下载
@@ -98,7 +118,8 @@ MimoNovel/
 │   ├── worker/              # Cloudflare Worker 后端
 │   │   ├── index.ts         # Hono 路由入口
 │   │   ├── routes/
-│   │   │   ├── analyze.ts   # LLM 分析接口
+│   │   │   ├── analyze.ts   # LLM 角色分析 (temp=0.3)
+│   │   │   ├── style.ts     # LLM 风格指令生成 (temp=0.8)
 │   │   │   └── tts.ts       # TTS 合成接口
 │   │   └── services/
 │   │       ├── mimo-llm.ts  # MiMo LLM 客户端
