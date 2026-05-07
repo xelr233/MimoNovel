@@ -29,10 +29,15 @@ export async function callTTS(
 
   messages.push({ role: "assistant", content: text });
 
+  const audio: Record<string, any> = { format };
+  if (model !== "mimo-v2.5-tts-voicedesign") {
+    audio.voice = voice;
+  }
+
   const body: Record<string, any> = {
     model,
     messages,
-    audio: { format, voice },
+    audio,
   };
 
   const res = await fetch(`${BASE_URL}/chat/completions`, {

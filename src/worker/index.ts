@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { analyzeRoute } from "./routes/analyze";
+import { generateRoute } from "./routes/generate";
 import { styleRoute } from "./routes/style";
 import { ttsRoute } from "./routes/tts";
 
@@ -13,6 +14,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use("/api/*", cors());
 
 app.route("/api", analyzeRoute);
+app.route("/api", generateRoute);
 app.route("/api", styleRoute);
 app.route("/api", ttsRoute);
 

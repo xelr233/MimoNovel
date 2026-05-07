@@ -40,9 +40,23 @@ export async function generateStyle(
   return data.style;
 }
 
+export async function generateText(
+  type: "voice-desc" | "synthesis-text",
+  prompt: string
+): Promise<string> {
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type, prompt }),
+  });
+  if (!res.ok) throw new Error(`生成失败: ${res.status}`);
+  const data = await res.json();
+  return data.text;
+}
+
 export async function synthesizeSpeech(
   text: string,
-  options: { voice?: string; style?: string } = {}
+  options: { voice?: string; style?: string; model?: string } = {}
 ): Promise<string> {
   const res = await fetch("/api/tts", {
     method: "POST",

@@ -1,16 +1,19 @@
-import { useState } from "react";
 import TextInput from "./components/TextInput";
 import CharacterPanel from "./components/CharacterPanel";
 import SegmentList from "./components/SegmentList";
 import AudioPlayer from "./components/AudioPlayer";
 import Header from "./components/Header";
 import StepIndicator from "./components/StepIndicator";
+import Studio from "./components/Studio";
 import { useNovelStore } from "./stores/novel";
+import { useState } from "react";
 
 type Step = "input" | "result" | "play";
+type Page = "home" | "studio";
 
 export default function App() {
   const { segments } = useNovelStore();
+  const [page, setPage] = useState<Page>("home");
 
   const currentStep: Step =
     segments.length > 0 ? "result" : "input";
@@ -24,34 +27,40 @@ export default function App() {
       </div>
 
       <div className="relative z-10">
-        <Header />
+        <Header page={page} onNavigate={setPage} />
 
         <main className="mx-auto max-w-5xl px-6 py-10">
-          <StepIndicator current={currentStep} />
+          {page === "home" ? (
+            <>
+              <StepIndicator current={currentStep} />
 
-          <div className="mt-8 space-y-8">
-            {/* Step 1: Input */}
-            <section className="animate-fade-in-up">
-              <TextInput />
-            </section>
-
-            {/* Step 2: Results */}
-            {segments.length > 0 && (
-              <>
-                <section className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-                  <CharacterPanel />
+              <div className="mt-8 space-y-8">
+                {/* Step 1: Input */}
+                <section className="animate-fade-in-up">
+                  <TextInput />
                 </section>
 
-                <section className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-                  <SegmentList />
-                </section>
+                {/* Step 2: Results */}
+                {segments.length > 0 && (
+                  <>
+                    <section className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+                      <CharacterPanel />
+                    </section>
 
-                <section className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-                  <AudioPlayer />
-                </section>
-              </>
-            )}
-          </div>
+                    <section className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+                      <SegmentList />
+                    </section>
+
+                    <section className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                      <AudioPlayer />
+                    </section>
+                  </>
+                )}
+              </div>
+            </>
+          ) : (
+            <Studio />
+          )}
         </main>
 
         <footer className="text-center py-8 text-ink-600 text-xs tracking-widest uppercase">
