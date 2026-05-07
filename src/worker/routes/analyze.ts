@@ -24,16 +24,13 @@ const SYSTEM_PROMPT = `你是一个小说文本分析助手。你的任务是分
 [{"type":"narration","character":null,"text":"夜幕降临，小镇笼罩在一片寂静之中。","emotion":"平静"},{"type":"dialogue","character":"张三","text":"你怎么还不回家？","emotion":"关切"}]`;
 
 function extractJSON(text: string): any[] {
-  // 去掉 markdown 代码块
   let cleaned = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
 
-  // 尝试直接解析
   try {
     const parsed = JSON.parse(cleaned);
     if (Array.isArray(parsed)) return parsed;
   } catch {}
 
-  // 尝试找第一个 [ 到最后一个 ]
   const start = cleaned.indexOf("[");
   const end = cleaned.lastIndexOf("]");
   if (start !== -1 && end > start) {
@@ -47,7 +44,7 @@ function extractJSON(text: string): any[] {
 }
 
 analyzeRoute.post("/analyze", async (c) => {
-  const { text } = await c.req.json<{ text: string }>();
+  const { text, model } = await c.req.json<{ text: string; model?: string }>();
 
   if (!text) {
     return c.json({ error: "text is required" }, 400);
@@ -60,7 +57,7 @@ analyzeRoute.post("/analyze", async (c) => {
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: text },
       ],
-      { temperature: 0.3, maxTokens: 65536 }
+      { temperature: 0.3, maxTokens: 65536, model: model || "mimo-v2.5-pro" }
     );
 
     const segments = extractJSON(result);

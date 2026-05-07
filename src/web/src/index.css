@@ -1,1 +1,98 @@
 @import "tailwindcss";
+
+@theme {
+  --color-ink-950: #0a0a0f;
+  --color-ink-900: #111118;
+  --color-ink-800: #1a1a24;
+  --color-ink-700: #252532;
+  --color-ink-600: #35354a;
+  --color-ink-500: #50506e;
+  --color-ink-400: #7a7a9e;
+  --color-ink-300: #a0a0be;
+
+  --color-amber-400: #f6b93b;
+  --color-amber-500: #e8a317;
+  --color-amber-600: #c78d0e;
+
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap");
+}
+
+body {
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  background: var(--color-ink-950);
+  color: var(--color-ink-300);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-amber-500);
+  color: var(--color-ink-950);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-600);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-500);
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(246, 185, 59, 0.3); }
+  50% { box-shadow: 0 0 20px 4px rgba(246, 185, 59, 0.15); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(246, 185, 59, 0.08) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* Noise texture overlay */
+.noise-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 50;
+}

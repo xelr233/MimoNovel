@@ -3,6 +3,7 @@ interface Voice {
   label: string;
   lang: string;
   gender: string;
+  color?: string;
 }
 
 interface Props {
@@ -14,13 +15,14 @@ interface Props {
 export default function VoiceSelector({ voices, value, onChange }: Props) {
   return (
     <select
-      className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+      className="mt-1 w-full appearance-none bg-transparent text-xs text-ink-500
+        focus:text-amber-400 outline-none cursor-pointer"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
       {voices.map((v) => (
-        <option key={v.id} value={v.id}>
-          {v.label} ({v.lang} · {v.gender})
+        <option key={v.id} value={v.id} className="bg-ink-900 text-ink-300">
+          {v.label} ({v.lang}·{v.gender})
         </option>
       ))}
     </select>

@@ -1,6 +1,7 @@
 const BASE_URL = "https://token-plan-sgp.xiaomimimo.com/v1";
 
 export interface LLMOptions {
+  model?: string;
   temperature?: number;
   topP?: number;
   maxTokens?: number;
@@ -11,7 +12,12 @@ export async function callLLM(
   messages: Array<{ role: string; content: string }>,
   options: LLMOptions = {}
 ) {
-  const { temperature = 0.3, topP = 0.95, maxTokens = 65536 } = options;
+  const {
+    model = "mimo-v2.5-pro",
+    temperature = 0.3,
+    topP = 0.95,
+    maxTokens = 65536,
+  } = options;
 
   const res = await fetch(`${BASE_URL}/chat/completions`, {
     method: "POST",
@@ -20,7 +26,7 @@ export async function callLLM(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "mimo-v2.5-pro",
+      model,
       messages,
       temperature,
       top_p: topP,

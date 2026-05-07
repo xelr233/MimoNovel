@@ -11,13 +11,16 @@ export interface CharacterVoice {
   style?: string;
 }
 
-export async function analyzeText(text: string): Promise<Segment[]> {
+export async function analyzeText(text: string, model: string = "mimo-v2.5-pro"): Promise<Segment[]> {
   const res = await fetch("/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, model }),
   });
-  if (!res.ok) throw new Error(`分析失败: ${res.status}`);
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error || `分析失败: ${res.status}`);
+  }
   const data = await res.json();
   return data.segments;
 }
