@@ -6,4 +6,3 @@ main = "src/worker/index.ts"
 directory = "dist"
 
 [vars]
-MIMO_API_KEY = ""
