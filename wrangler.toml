@@ -1,4 +1,4 @@
-name = "mimo-novel"
+name = "mimonovel"
 compatibility_date = "2025-05-01"
 main = "src/worker/index.ts"
 
