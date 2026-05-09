@@ -1,4 +1,4 @@
-const BASE_URL = "https://token-plan-sgp.xiaomimimo.com/v1";
+const BASE_URL = "https://token-plan-cn.xiaomimimo.com/v1";
 
 export interface LLMOptions {
   model?: string;
